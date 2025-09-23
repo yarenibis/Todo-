@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 
 namespace api.Dtos.Todo
 {
-    public class TodoDtoList
+    public class UpdateTodoRequest
     {
-        public int Id { get; set; }
         public string Title { get; set; }
-        public Boolean isCompleted { get; set; }
+        public string Description { get; set; }
+        public DateTime DueDate { get; set; }
+
+        public Boolean isCompleted{ get; set; }
     }
 }
