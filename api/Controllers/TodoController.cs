@@ -3,6 +3,7 @@ using api.Dtos.Todo;
 using api.Mapper;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers
 {
@@ -17,17 +18,18 @@ namespace api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var todos = _context.Todos.ToList().Select(s => s.ListTodoDto());
-            return Ok(todos);
+            var todos = await _context.Todos.ToListAsync();
+            var todoDto= todos.Select(s => s.ListTodoDto());
+            return Ok(todoDto);
         }
 
 
         [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var result = _context.Todos.Find(id);
+            var result = await  _context.Todos.FindAsync(id);
             if (result == null)
             {
                 return NotFound();
@@ -37,11 +39,11 @@ namespace api.Controllers
 
 
         [HttpPost]
-        public IActionResult CreateTodo([FromBody] CreateTodoRequest todo)
+        public async Task<IActionResult> CreateTodo([FromBody] CreateTodoRequest todo)
         {
             var todoModel = todo.CreateTodoDto();
-            _context.Todos.Add(todoModel);
-            _context.SaveChanges();
+           await  _context.Todos.AddAsync(todoModel);
+           await  _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = todoModel.Id }, todoModel.ListTodoDto());
 
         }
@@ -49,9 +51,9 @@ namespace api.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public IActionResult UpdateTodo([FromRoute] int id, [FromBody] UpdateTodoRequest updatedModel)
+        public async Task<IActionResult> UpdateTodo([FromRoute] int id, [FromBody] UpdateTodoRequest updatedModel)
         {
-            var todoModel = _context.Todos.FirstOrDefault(t => t.Id == id);
+            var todoModel =await _context.Todos.FirstOrDefaultAsync(t => t.Id == id);
             if (todoModel == null)
             {
                 return NotFound();
@@ -61,7 +63,7 @@ namespace api.Controllers
             todoModel.Description = updatedModel.Description;
             todoModel.DueDate = updatedModel.DueDate;
             todoModel.isCompleted = updatedModel.isCompleted;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return Ok(todoModel.ListTodoDto());
         }
 
@@ -69,15 +71,15 @@ namespace api.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        public IActionResult DeleteTodo([FromRoute] int id)
+        public async Task<IActionResult> DeleteTodo([FromRoute] int id)
         {
-            var todoModel = _context.Todos.FirstOrDefault(t => t.Id == id);
+            var todoModel =await _context.Todos.FirstOrDefaultAsync(t => t.Id == id);
             if (todoModel == null)
             {
                 return NotFound();
             }
             _context.Todos.Remove(todoModel);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }
