@@ -1,5 +1,6 @@
 using api.Data;
 using api.Dtos.Todo;
+using api.Interface;
 using api.Mapper;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -12,16 +13,18 @@ namespace api.Controllers
     public class TodoController : ControllerBase
     {
         private readonly ApplicationDBContext _context;
-        public TodoController(ApplicationDBContext context)
+        private readonly ITodoRepository _repository;
+        public TodoController(ApplicationDBContext context, ITodoRepository repository)
         {
             _context = context;
+            _repository = repository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var todos = await _context.Todos.ToListAsync();
-            var todoDto= todos.Select(s => s.ListTodoDto());
+            var todos = await _repository.GetAllAsync();
+            var todoDto = todos.Select(s => s.ListTodoDto());
             return Ok(todoDto);
         }
 
@@ -29,7 +32,7 @@ namespace api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var result = await  _context.Todos.FindAsync(id);
+            var result = await _repository.GetByIdAsync(id);
             if (result == null)
             {
                 return NotFound();
@@ -42,8 +45,7 @@ namespace api.Controllers
         public async Task<IActionResult> CreateTodo([FromBody] CreateTodoRequest todo)
         {
             var todoModel = todo.CreateTodoDto();
-           await  _context.Todos.AddAsync(todoModel);
-           await  _context.SaveChangesAsync();
+            await _repository.CreateAsync(todoModel);
             return CreatedAtAction(nameof(GetById), new { id = todoModel.Id }, todoModel.ListTodoDto());
 
         }
@@ -53,17 +55,13 @@ namespace api.Controllers
         [Route("{id}")]
         public async Task<IActionResult> UpdateTodo([FromRoute] int id, [FromBody] UpdateTodoRequest updatedModel)
         {
-            var todoModel =await _context.Todos.FirstOrDefaultAsync(t => t.Id == id);
+            var todoModel = await _repository.UpdateAsync(id, updatedModel);
             if (todoModel == null)
             {
                 return NotFound();
             }
 
-            todoModel.Title = updatedModel.Title;
-            todoModel.Description = updatedModel.Description;
-            todoModel.DueDate = updatedModel.DueDate;
-            todoModel.isCompleted = updatedModel.isCompleted;
-            await _context.SaveChangesAsync();
+
             return Ok(todoModel.ListTodoDto());
         }
 
@@ -73,13 +71,12 @@ namespace api.Controllers
         [Route("{id}")]
         public async Task<IActionResult> DeleteTodo([FromRoute] int id)
         {
-            var todoModel =await _context.Todos.FirstOrDefaultAsync(t => t.Id == id);
+            var todoModel = await _repository.DeleteAsync(id);
             if (todoModel == null)
             {
                 return NotFound();
             }
-            _context.Todos.Remove(todoModel);
-            await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }

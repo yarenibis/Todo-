@@ -1,6 +1,8 @@
 
 using api.Data;
+using api.Interface;
 using api.Models;
+using api.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -21,14 +23,12 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
-
-
-
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddScoped<ITodoRepository, TodoRepository>();
 
 var app = builder.Build();
 
