@@ -308,3 +308,5 @@ C:\Users\yaren\vscodeProjects\ToDo\Todo-\api\obj\Debug\net9.0\ref\api.dll
 C:\Users\yaren\vscodeProjects\ToDo\Todo-\api\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\yaren\vscodeProjects\ToDo\Todo-\api\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\yaren\vscodeProjects\ToDo\Todo-\api\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\yaren\vscodeProjects\ToDo\Todo-\api\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\yaren\vscodeProjects\ToDo\Todo-\api\bin\Debug\net9.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
