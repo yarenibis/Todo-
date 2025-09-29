@@ -10,6 +10,8 @@ namespace api.Interface
     public interface ITodoRepository
     {
         Task<List<Todo>> GetAllAsync();
+        Task<List<Todo>> GetAllByUserAsync(string userId);
+
         Task<Todo?> GetByIdAsync(int id);
         Task<Todo> CreateAsync(Todo todo);
         Task<Todo?> UpdateAsync(int id, UpdateTodoRequest request);

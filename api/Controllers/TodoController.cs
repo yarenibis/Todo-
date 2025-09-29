@@ -3,80 +3,94 @@ using api.Dtos.Todo;
 using api.Interface;
 using api.Mapper;
 using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace api.Controllers
 {
     [Route("api/todo")]
     [ApiController]
+    [Authorize] // 🔐 Sadece giriş yapmış kullanıcılar erişebilir
     public class TodoController : ControllerBase
     {
         private readonly ApplicationDBContext _context;
         private readonly ITodoRepository _repository;
+
         public TodoController(ApplicationDBContext context, ITodoRepository repository)
         {
             _context = context;
             _repository = repository;
         }
 
+        // 🟢 Kullanıcıya ait tüm Todo'lar
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAll()
         {
-            var todos = await _repository.GetAllAsync();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var todos = await _repository.GetAllByUserAsync(userId);
             var todoDto = todos.Select(s => s.ListTodoDto());
             return Ok(todoDto);
         }
 
-
+        // 🟢 Tek bir Todo getir (kullanıcıya ait olmalı)
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var result = await _repository.GetByIdAsync(id);
-            if (result == null)
+
+            if (result == null || result.UserId != userId)
             {
                 return NotFound();
             }
             return Ok(result.ListTodoDto());
         }
 
-
+        // 🟢 Yeni Todo oluştur
         [HttpPost]
         public async Task<IActionResult> CreateTodo([FromBody] CreateTodoRequest todo)
         {
-            var todoModel = todo.CreateTodoDto();
-            await _repository.CreateAsync(todoModel);
-            return CreatedAtAction(nameof(GetById), new { id = todoModel.Id }, todoModel.ListTodoDto());
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            var todoModel = todo.CreateTodoDto();
+            todoModel.UserId = userId; // 🔹 Todo'yu kullanıcıya bağla
+
+            await _repository.CreateAsync(todoModel);
+
+            return CreatedAtAction(nameof(GetById), new { id = todoModel.Id }, todoModel.ListTodoDto());
         }
 
-
-        [HttpPut]
-        [Route("{id}")]
+        // 🟢 Todo güncelle (kullanıcıya ait olmalı)
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTodo([FromRoute] int id, [FromBody] UpdateTodoRequest updatedModel)
         {
-            var todoModel = await _repository.UpdateAsync(id, updatedModel);
-            if (todoModel == null)
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var todoModel = await _repository.GetByIdAsync(id);
+
+            if (todoModel == null || todoModel.UserId != userId)
             {
                 return NotFound();
             }
 
-
-            return Ok(todoModel.ListTodoDto());
+            var updatedTodo = await _repository.UpdateAsync(id, updatedModel);
+            return Ok(updatedTodo.ListTodoDto());
         }
 
-
-
-        [HttpDelete]
-        [Route("{id}")]
+        // 🟢 Todo sil (kullanıcıya ait olmalı)
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodo([FromRoute] int id)
         {
-            var todoModel = await _repository.DeleteAsync(id);
-            if (todoModel == null)
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var todoModel = await _repository.GetByIdAsync(id);
+
+            if (todoModel == null || todoModel.UserId != userId)
             {
                 return NotFound();
             }
 
+            await _repository.DeleteAsync(id);
             return NoContent();
         }
     }

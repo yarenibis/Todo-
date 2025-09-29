@@ -10,5 +10,8 @@ namespace api.Models
         public DateTime DueDate { get; set; }
 
         public Boolean isCompleted { get; set; } = false;
+
+        public string? UserId { get; set; }
+    public AppUser? User { get; set; }
     }
 }
