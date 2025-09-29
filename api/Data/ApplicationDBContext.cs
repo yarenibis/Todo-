@@ -24,7 +24,11 @@ namespace api.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            
+            builder.Entity<Todo>()
+            .HasOne(t => t.User)
+            .WithMany()  // Eğer AppUser'da Todos koleksiyonu yoksa
+            .HasForeignKey(t => t.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
             List<IdentityRole> roles = new List<IdentityRole>
             {

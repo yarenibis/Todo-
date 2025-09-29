@@ -11,7 +11,7 @@ namespace api.Models
 
         public Boolean isCompleted { get; set; } = false;
 
-        public string? UserId { get; set; }
-    public AppUser? User { get; set; }
+        public string UserId { get; set; }
+    public AppUser User { get; set; }
     }
 }
