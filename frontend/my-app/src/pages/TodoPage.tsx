@@ -20,6 +20,7 @@ export default function TodoPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null); // 🔹 Güncellenen Todo Id
 
   useEffect(() => {
     loadTodos();
@@ -30,9 +31,17 @@ export default function TodoPage() {
     setTodos(data);
   }
 
-  async function handleAdd() {
+  async function handleAddOrUpdate() {
     if (!title || !dueDate) return;
-    await createTodo(title, description, dueDate);
+
+    if (editingId) {
+      await updateTodo(editingId, title, description, dueDate, false);
+      setEditingId(null);
+    } else {
+      // ➕ Yeni ekleme
+      await createTodo(title, description, dueDate);
+    }
+
     setTitle("");
     setDescription("");
     setDueDate("");
@@ -46,13 +55,20 @@ export default function TodoPage() {
 
   async function handleToggleComplete(todo: any) {
     await updateTodo(
-        todo.id, 
-        todo.title, 
-        todo.description, 
-        todo.dueDate, 
-        !todo.isCompleted // Yeni durum
-      );
+      todo.id,
+      todo.title,
+      todo.description,
+      todo.dueDate,
+      !todo.isCompleted
+    );
     loadTodos();
+  }
+
+  function handleEdit(todo: any) {
+    setEditingId(todo.id);
+    setTitle(todo.title);
+    setDescription(todo.description);
+    setDueDate(todo.dueDate.split("T")[0]); // 🔹 date input formatı için
   }
 
   return (
@@ -84,8 +100,8 @@ export default function TodoPage() {
             onChange={(e) => setDueDate(e.target.value)}
             size="small"
           />
-          <Button variant="contained" onClick={handleAdd}>
-            Ekle
+          <Button variant="contained" onClick={handleAddOrUpdate}>
+            {editingId ? "Güncelle" : "Ekle"}
           </Button>
         </Box>
       </Paper>
@@ -97,6 +113,9 @@ export default function TodoPage() {
             key={t.id}
             secondaryAction={
               <>
+                <IconButton onClick={() => handleEdit(t)}>
+                  <Edit />
+                </IconButton>
                 <IconButton onClick={() => handleDelete(t.id)}>
                   <Delete />
                 </IconButton>
@@ -109,7 +128,12 @@ export default function TodoPage() {
             />
             <ListItemText
               primary={t.title}
-              secondary={`Bitiş: ${new Date(t.dueDate).toLocaleDateString()}`}
+              secondary={
+                <>
+                  {t.description} <br />
+                  Bitiş: {new Date(t.dueDate).toLocaleDateString()}
+                </>
+              }
               sx={{
                 textDecoration: t.isCompleted ? "line-through" : "none",
               }}

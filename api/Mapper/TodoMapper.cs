@@ -15,6 +15,7 @@ namespace api.Mapper
             {
                 Id = todomodel.Id,
                 Title = todomodel.Title,
+                Description=todomodel.Description,
                 isCompleted = todomodel.isCompleted,
                 DueDate = todomodel.DueDate
             };

@@ -11,7 +11,7 @@ namespace api.Controllers
 {
     [Route("api/todo")]
     [ApiController]
-    [Authorize] // 🔐 Sadece giriş yapmış kullanıcılar erişebilir
+    [Authorize]
     public class TodoController : ControllerBase
     {
         private readonly ApplicationDBContext _context;
@@ -23,7 +23,6 @@ namespace api.Controllers
             _repository = repository;
         }
 
-        // 🟢 Kullanıcıya ait tüm Todo'lar
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAll()
@@ -34,7 +33,7 @@ namespace api.Controllers
             return Ok(todoDto);
         }
 
-        // 🟢 Tek bir Todo getir (kullanıcıya ait olmalı)
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
@@ -48,7 +47,7 @@ namespace api.Controllers
             return Ok(result.ListTodoDto());
         }
 
-        // 🟢 Yeni Todo oluştur
+
         [HttpPost]
         public async Task<IActionResult> CreateTodo([FromBody] CreateTodoRequest todo)
         {
@@ -62,7 +61,7 @@ namespace api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = todoModel.Id }, todoModel.ListTodoDto());
         }
 
-        // 🟢 Todo güncelle (kullanıcıya ait olmalı)
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTodo([FromRoute] int id, [FromBody] UpdateTodoRequest updatedModel)
         {
@@ -78,7 +77,7 @@ namespace api.Controllers
             return Ok(updatedTodo.ListTodoDto());
         }
 
-        // 🟢 Todo sil (kullanıcıya ait olmalı)
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodo([FromRoute] int id)
         {
