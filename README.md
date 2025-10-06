@@ -22,17 +22,17 @@ experience.
     <tr>
       <td><b>🏠 Register Page</b></td>
       <td>Users can create a new account with a username, email, password, and password confirmation.</td>
-      <td><img src="./screenshots/register.png" alt="Register Page" width="400"/></td>
+      <td><img src="./todo-register.png" alt="Register Page" width="400"/></td>
     </tr>
     <tr>
       <td><b>🔐 Login Page</b></td>
       <td>Users can log in securely using their credentials. </td>
-      <td><img src="./screenshots/login.png" alt="Login Page" width="400"/></td>
+      <td><img src="./todo-login.png" alt="Login Page" width="400"/></td>
     </tr>
     <tr>
       <td><b>✅ Todo List Page</b></td>
       <td>Displays all tasks with title, description, and due date. Completed tasks appear with a strikethrough and checkbox.</td>
-      <td><img src="./screenshots/todo.png" alt="Todo List Page" width="400"/></td>
+      <td><img src="./todo-page.png" alt="Todo List Page" width="400"/></td>
     </tr>
   </tbody>
 </table>
