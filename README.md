@@ -32,7 +32,7 @@ experience.
     <tr>
       <td><b>✅ Todo List Page</b></td>
       <td>Displays all tasks with title, description, and due date. Completed tasks appear with a strikethrough and checkbox.</td>
-      <td><img src="./todo-page.png" alt="Todo List Page" width="400"/></td>
+      <td><img src="./todopage.png" alt="Todo List Page" width="400"/></td>
     </tr>
   </tbody>
 </table>
