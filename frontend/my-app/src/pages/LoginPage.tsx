@@ -13,7 +13,7 @@ export default function LoginPage() {
       const user = await login(userName, password);
       if (user?.token) {
         alert("Giriş başarılı!");
-        navigate("/todos"); // 🔥 başarılı olursa todos sayfasına yönlendir
+        navigate("/todos");
       }
     } catch (err) {
       alert("Login failed!");

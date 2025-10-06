@@ -16,7 +16,6 @@ export async function deleteTodo(id: number) {
 
 export async function updateTodo(id: number, title: string, description: string, dueDate: string, isCompleted: boolean) {
   try {
-    // 🔥 VERİLERİ TEMİZLE VE FORMATLA
     const payload = {
       title: title || '', // null/undefined ise boş string
       description: description || '', // undefined ise boş string
@@ -24,15 +23,15 @@ export async function updateTodo(id: number, title: string, description: string,
       isCompleted: isCompleted
     };
 
-    console.log("📡 Backend'e gönderilen TEMİZ veri:", payload);
+    console.log(" Backend'e gönderilen TEMİZ veri:", payload);
 
     const res = await api.put(`/todo/${id}`, payload);
-    console.log("📡 Backend'den gelen response:", res.data);
+    console.log(" Backend'den gelen response:", res.data);
     
     return res.data;
     
   } catch (error) {
-    console.error("📡 API Hatası:", error);
+    console.error(" API Hatası:", error);
     throw error;
   }
 }

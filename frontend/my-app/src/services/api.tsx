@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5079/api", // backend URL’ini buraya yaz
+  baseURL: "http://localhost:5079/api", 
 });
 
 // Token varsa header’a ekle
